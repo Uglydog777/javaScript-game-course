@@ -63,6 +63,7 @@ window.onload = function(){
     canvas.addEventListener('mousemove', updateMousePos);
 
     brickReset();
+    ballReset();
  }
 // the game loop
 function updateAll(){
@@ -92,6 +93,7 @@ function ballMove(){
     if(ballY > canvas.height){
         //ballSpeedY *= -1;
         ballReset();
+        brickReset();
     }
     //check top
     if(ballY < 0){
@@ -159,6 +161,10 @@ function ballPaddleHandling(){
         var ballDistFromPaddleCenterX = ballX - centerOfPaddleX;
         
         ballSpeedX = ballDistFromPaddleCenterX * 0.35;
+
+        if(bricksLeft == 0){
+            brickReset();
+        }
         }
 }
 
