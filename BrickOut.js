@@ -82,11 +82,11 @@ function ballMove(){
     ballY += ballSpeedY;
     // ball wall collision checks
     //check right
-    if(ballX > canvas.width){
+    if(ballX > canvas.width && ballSpeedX > 0.0){
         ballSpeedX *= -1;
     }
     // check left
-    if(ballX < 0){
+    if(ballX < 0 && ballSpeedX < 0.0){
         ballSpeedX *= -1;
     }
     //check bottom
@@ -101,6 +101,15 @@ function ballMove(){
     }
 }
 
+function isBrickAtColRow(col, row){
+    if(col >= 0 && col < brickCols && row >= 0 && row < brickRow){
+    var brickIndexUnderCoord = rowColToArrayIndex(col, row);
+    return brickGrid[brickIndexUnderCoord];
+    } else {
+        return false;
+    }
+}
+
 function ballBrickHandling(){
     var ballBrickCol = Math.floor(ballX / brickWidth);
     var ballBrickRow = Math.floor(ballY / brickHeight);
@@ -108,7 +117,7 @@ function ballBrickHandling(){
     
     //colorText(mouseBrickCol+","+mouseBrickRow+": "+brickIndexUnderMouse , mouseX,mouseY, 'yellow')
     if(ballBrickCol >= 0 && ballBrickCol < brickCols && ballBrickRow >= 0 && ballBrickRow < brickRow){
-        if(brickGrid[brickIndexUnderBall]){
+        if(isBrickAtColRow(ballBrickCol, ballBrickRow)){
         brickGrid[brickIndexUnderBall] = false;
         bricksLeft--;
         console.log(bricksLeft);
@@ -123,7 +132,7 @@ function ballBrickHandling(){
             if (prevBrickCol != ballBrickCol){
                 var adjBrickSide = rowColToArrayIndex(prevBrickCol, ballBrickRow)
                 
-                if(brickGrid[adjBrickSide] == false){
+                if(isBrickAtColRowad(prevBrickCol, prevBrickRow) == false){
                     ballSpeedX *= -1;
                     bothTestFailed = false;
                 }
@@ -131,7 +140,7 @@ function ballBrickHandling(){
             if(prevBrickRow != ballBrickRow){
                 var adjBrickTopBot = rowColToArrayIndex(ballBrickCol, prevBrickRow)
                 
-                if(brickGrid[adjBrickTopBot] == false){    
+                if(isBrickAtColRow(ballBrickCol, prevBrickRow) == false){    
                     ballSpeedY *= -1;
                     bothTestFailed = false;
                 }
