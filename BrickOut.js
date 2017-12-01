@@ -132,7 +132,7 @@ function ballBrickHandling(){
             if (prevBrickCol != ballBrickCol){
                 var adjBrickSide = rowColToArrayIndex(prevBrickCol, ballBrickRow)
                 
-                if(isBrickAtColRowad(prevBrickCol, prevBrickRow) == false){
+                if(isBrickAtColRow(prevBrickCol, prevBrickRow) == false){
                     ballSpeedX *= -1;
                     bothTestFailed = false;
                 }
