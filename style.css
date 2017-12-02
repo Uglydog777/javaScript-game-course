@@ -1,0 +1,35 @@
+body {
+    background-color: #3d3d3d
+}
+
+#header {
+    background-color: #7e7f80;
+    color: #e4d479;
+    text-align: center;
+}
+
+#container {
+
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#footer {
+    background-color: #7e7f80;
+    color: #bbbbbb;
+    text-align: center;
+}
+
+canvas{
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: block; 
+    width: 900;
+
+}
+a{
+    text-decoration: none;
+    color: greenyellow
+}
