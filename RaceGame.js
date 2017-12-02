@@ -31,7 +31,7 @@
                      1,0,0,1,1,1,1,0,0,0,0,1,1,1,1,1,1,0,0,1,
                      1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,
                      1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,
-                     1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,
+                     1,0,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,
                      1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,
                      1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,
                      1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,1,
@@ -69,8 +69,17 @@ function updateAll(){
     }
 
 function ballReset(){
-    ballX = canvas.width/2;
-    ballY = canvas.height/2;
+    for(var eachRow=0;eachRow<trackRow;eachRow++){    
+        for(var eachCol=0;eachCol<trackCols;eachCol++){
+
+            var arrayIndex = rowColToArrayIndex(eachCol, eachRow);
+            if(trackGrid[arrayIndex] == 2){
+                trackGrid[arrayIndex] = 0;
+                ballX = eachCol * trackWidth + trackWidth / 2;
+                ballY = eachRow * trackHeight + trackHeight /2;
+            }
+        }
+    }        
  }
 
 function ballMove(){
