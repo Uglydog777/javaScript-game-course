@@ -10,6 +10,9 @@
  var bgHeight = 600;
  var bgColor = 'black';
 // ball setup
+ var carPic = document.createElement("img");
+ var carPicLoaded = false;
+
  var ballX = 75;
  var ballY = 75;
  var ballSpeedX = 5;
@@ -59,6 +62,10 @@ window.onload = function(){
 
     canvas.addEventListener('mousemove', updateMousePos);
 
+    carPic.onload = function(){
+        carPicLoaded = true;
+    }
+      carPic.src = "Player1car.png";
    
     ballReset();
  }
@@ -159,7 +166,7 @@ function ballTrackHandling(){
 
 
 function moveAll(){
-    ballMove();
+  //  ballMove();
     ballTrackHandling();
    
  }
@@ -186,8 +193,10 @@ function drawAll(){
         // draw tracks
         drawTrack();
         //draw ball
-        colorCircle(ballX,ballY, ballRadius, ballColor);
-       
+       // colorCircle(ballX,ballY, ballRadius, ballColor);
+       if(carPicLoaded){
+           canvasContext.drawImage(carPic, ballX - carPic.width/2, ballY - carPic.height/2)
+       }
         
        
        /* 
