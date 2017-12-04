@@ -3,22 +3,33 @@
  var canvas, canvasContext;
  var mouseX;
  var mouseY;
+
+ const KEY_LEFT_ARROW = 37;
+ const KEY_UP_ARROW = 38;
+ const KEY_RIGHT_ARROW = 39;
+ const KEY_DOWN_ARROW = 40;
+
+ var keyHeld_Gas = false;
+ var keyHeld_Reverse = false;
+ var keyHeld_TurnLeft = false;
+ var keyHeld_TurnRight = false;
+
 // background setup
  var bgX = 0;
  var bgY = 0;
  var bgWidth = 800;
  var bgHeight = 600;
  var bgColor = 'black';
-// ball setup
+// car setup
  var carPic = document.createElement("img");
  var carPicLoaded = false;
 
- var ballX = 75;
- var ballY = 75;
- var ballSpeedX = 5;
- var ballSpeedY = 7;
- var ballRadius = 10;
- var ballColor = "white";
+ var carX = 75;
+ var carY = 75;
+ var carAng = 0;
+ var carSpeed = 0;
+ var carRadius = 10;
+ var carColor = "white";
 
 // track setup
     var trackWidth = 40;
@@ -52,6 +63,40 @@ function updateMousePos(evt){
  
 }
 
+function keyPressed(evt){
+  //  console.log("Key pressed: "+evt.keyCode);
+    if(evt.keyCode == KEY_LEFT_ARROW){
+        keyHeld_TurnLeft = true;
+    }
+    if(evt.keyCode == KEY_RIGHT_ARROW){
+        keyHeld_TurnRight = true;
+    }
+    if(evt.keyCode == KEY_UP_ARROW){
+        keyHeld_Gas = true;
+    }
+    if(evt.keyCode == KEY_DOWN_ARROW){
+        keyHeld_Reverse = true;
+    }
+
+    evt.preventDefault();
+}
+
+function keyReleased(evt){
+  //  console.log("Key Released: "+evt.keyCode);
+    if(evt.keyCode == KEY_LEFT_ARROW){
+        keyHeld_TurnLeft = false;
+    }
+    if(evt.keyCode == KEY_RIGHT_ARROW){
+        keyHeld_TurnRight = false;
+    }
+    if(evt.keyCode == KEY_UP_ARROW){
+        keyHeld_Gas = false;
+    }
+    if(evt.keyCode == KEY_DOWN_ARROW){
+        keyHeld_Reverse = false;
+    }
+}
+
 window.onload = function(){
     // setup the play area for the game
     canvas = document.getElementById('gameCanvas');
@@ -62,12 +107,15 @@ window.onload = function(){
 
     canvas.addEventListener('mousemove', updateMousePos);
 
+    document.addEventListener('keydown', keyPressed);
+    document.addEventListener('keyup', keyReleased);
+
     carPic.onload = function(){
         carPicLoaded = true;
     }
       carPic.src = "Player1car.png";
    
-    ballReset();
+    carReset();
  }
 // the game loop
 function updateAll(){
@@ -75,43 +123,42 @@ function updateAll(){
     drawAll();
     }
 
-function ballReset(){
+function carReset(){
     for(var eachRow=0;eachRow<trackRow;eachRow++){    
         for(var eachCol=0;eachCol<trackCols;eachCol++){
 
             var arrayIndex = rowColToArrayIndex(eachCol, eachRow);
             if(trackGrid[arrayIndex] == 2){
                 trackGrid[arrayIndex] = 0;
-                ballX = eachCol * trackWidth + trackWidth / 2;
-                ballY = eachRow * trackHeight + trackHeight /2;
+                carAng = -Math.PI/2;
+                carX = eachCol * trackWidth + trackWidth / 2;
+                carY = eachRow * trackHeight + trackHeight /2;
             }
         }
     }        
  }
 
-function ballMove(){
-    // move the ball
-    ballX += ballSpeedX;
-    ballY += ballSpeedY;
-    // ball wall collision checks
-    //check right
-    if(ballX > canvas.width && ballSpeedX > 0.0){
-        ballSpeedX *= -1;
+function carMove(){
+    carSpeed *= 0.97;
+    if(keyHeld_Gas){
+        carSpeed += 0.3;
     }
-    // check left
-    if(ballX < 0 && ballSpeedX < 0.0){
-        ballSpeedX *= -1;
+    if(keyHeld_Reverse){
+        carSpeed -= 0.5;
     }
-    //check bottom
-    if(ballY > canvas.height){
-        //ballSpeedY *= -1;
-        ballReset();
-        trackReset();
+    if(keyHeld_TurnRight){
+        carAng += 0.04;
     }
-    //check top
-    if(ballY < 0){
-        ballSpeedY *= -1;
+    if(keyHeld_TurnLeft){
+        carAng -= 0.04;
     }
+    // move the car
+    carX += Math.cos(carAng) * carSpeed;
+    carY += Math.sin(carAng) * carSpeed;
+   // carAng += 0.02;
+   
+    // car wall collision checks
+   
 }
 
 function isTrackAtColRow(col, row){
@@ -123,42 +170,17 @@ function isTrackAtColRow(col, row){
     }
 }
 
-function ballTrackHandling(){
-    var ballTrackCol = Math.floor(ballX / trackWidth);
-    var ballTrackRow = Math.floor(ballY / trackHeight);
-    var trackIndexUnderBall = rowColToArrayIndex(ballTrackCol, ballTrackRow);
+function carTrackHandling(){
+    var carTrackCol = Math.floor(carX / trackWidth);
+    var carTrackRow = Math.floor(carY / trackHeight);
+    var trackIndexUnderCar = rowColToArrayIndex(carTrackCol, carTrackRow);
     
     //colorText(mouseTrackCol+","+mouseTrackRow+": "+trackIndexUnderMouse , mouseX,mouseY, 'yellow')
-    if(ballTrackCol >= 0 && ballTrackCol < trackCols && ballTrackRow >= 0 && ballTrackRow < trackRow){
-        if(isTrackAtColRow(ballTrackCol, ballTrackRow)){
-       
-        var prevBallX = ballX - ballSpeedX;
-        var prevBallY = ballY - ballSpeedY;
-        var prevTrackCol = Math.floor(prevBallX / trackWidth);
-        var prevTrackRow = Math.floor(prevBallY / trackHeight);
-        
-        var bothTestFailed = true;
-
-            if (prevTrackCol != ballTrackCol){
-                var adjTrackSide = rowColToArrayIndex(prevTrackCol, ballTrackRow)
-                
-                if(isTrackAtColRow(prevTrackCol, prevTrackRow) == false){
-                    ballSpeedX *= -1;
-                    bothTestFailed = false;
-                }
-            }
-            if(prevTrackRow != ballTrackRow){
-                var adjTrackTopBot = rowColToArrayIndex(ballTrackCol, prevTrackRow)
-                
-                if(isTrackAtColRow(ballTrackCol, prevTrackRow) == false){    
-                    ballSpeedY *= -1;
-                    bothTestFailed = false;
-                }
-            }
-            if(bothTestFailed){
-                ballSpeedX *= -1;
-                ballSpeedY *= -1;
-            }
+    if(carTrackCol >= 0 && carTrackCol < trackCols && carTrackRow >= 0 && carTrackRow < trackRow){
+        if(isTrackAtColRow(carTrackCol, carTrackRow)){
+            carX -= Math.cos(carAng) * carSpeed;
+            carY -= Math.sin(carAng) * carSpeed;
+            carSpeed *= -0.5;
         }
     }
 }
@@ -166,8 +188,8 @@ function ballTrackHandling(){
 
 
 function moveAll(){
-  //  ballMove();
-    ballTrackHandling();
+    carMove();
+    carTrackHandling();
    
  }
 
@@ -192,10 +214,10 @@ function drawAll(){
         colorRect(bgX,bgY,bgWidth,bgHeight,bgColor);
         // draw tracks
         drawTrack();
-        //draw ball
-       // colorCircle(ballX,ballY, ballRadius, ballColor);
+        //draw car
+       // colorCircle(carX,carY, carRadius, carColor);
        if(carPicLoaded){
-           canvasContext.drawImage(carPic, ballX - carPic.width/2, ballY - carPic.height/2)
+        drawBitmapCenteredWithRotation(carPic, carX,carY, carAng);
        }
         
        
@@ -210,6 +232,14 @@ function drawAll(){
             trackGrid[trackIndexUnderMouse] = false;
         }*/
     }
+
+function drawBitmapCenteredWithRotation(useBitmap, atX, atY, withAng){
+    canvasContext.save();
+    canvasContext.translate(atX, atY);
+    canvasContext.rotate(withAng);
+    canvasContext.drawImage(useBitmap, -useBitmap.width/2, -useBitmap.height/2);
+    canvasContext.restore();
+}
 
 function colorRect(topLeftX,topLeftY,boxWidth,boxHeight,fillColor){
     canvasContext.fillStyle = fillColor;
