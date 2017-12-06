@@ -14,12 +14,20 @@ window.onload = function(){
     canvas = document.getElementById('gameCanvas');
     canvasContext = canvas.getContext("2d");
     // setup the frame rate
+    
+    // loading screen ;-P
+    colorRect(0,0, canvas.width, canvas.height, 'black');
+    colorText("Loading Images", canvas.width/2, canvas.height/2, 'white')
+
+
+    loadImages();
+}
+
+function imageLoadingDoneSoStartGame(){
     var framesPerSecond = 30;
     setInterval(updateAll, 1000/framesPerSecond);// this repeatedly calls updateAll function for our game loop (30 fps)
 
     setupInput();
-    trackLoadImages();
-    carImageLoad();
     carReset();
 }
 // the game loop
