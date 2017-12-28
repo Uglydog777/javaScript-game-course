@@ -29,12 +29,12 @@ const TRACK_TREES = 4;
 const TRACK_FLAG = 5;
 const TRACK_GOAL = 6;  
 
-function isObstacleAtColRow(col, row){
+function returnTileTypeAtColRow(col, row){
     if(col >= 0 && col < trackCols && row >= 0 && row < trackRow){
     var trackIndexUnderCoord = rowColToArrayIndex(col, row);
-    return (trackGrid[trackIndexUnderCoord] != TRACK_ROAD);
+    return trackGrid[trackIndexUnderCoord];
     } else {
-        return false;
+        return TRACK_WALL;
     }
 }
 
@@ -45,9 +45,11 @@ function carTrackHandling(whichCar){
     
     //colorText(mouseTrackCol+","+mouseTrackRow+": "+trackIndexUnderMouse , mouseX,mouseY, 'yellow')
     if(carTrackCol >= 0 && carTrackCol < trackCols && carTrackRow >= 0 && carTrackRow < trackRow){
-        if(isObstacleAtColRow(carTrackCol, carTrackRow)){
-          //  carX -= Math.cos(carAng) * carSpeed;
-          //  carY -= Math.sin(carAng) * carSpeed;
+        var tileHere = returnTileTypeAtColRow(carTrackCol, carTrackRow);
+        
+        if(tileHere == TRACK_GOAL){
+             console.log(whichCar.name + " is not the loser");
+          } else if(tileHere != TRACK_ROAD){
             whichCar.speed *= -0.5;
         }
     }

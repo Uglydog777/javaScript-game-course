@@ -15,8 +15,28 @@ function carClass() {
     this.radius = 10;
     this.color = "white";
     this.myCarPic; // which picture to use
+    this.name = "Untitled Car";
 
-    this.reset = function(whichImage){
+    this.keyHeld_Gas = false;
+    this.keyHeld_Reverse = false;
+    this.keyHeld_TurnLeft = false;
+    this.keyHeld_TurnRight = false;
+
+    this.controlKeyUp;
+    this.controlKeyRight;
+    this.controlKeyDown;
+    this.controlKeyLeft;
+
+    this.setupInput = function(upKey, rightKey, downKey, leftKey){
+       
+        this.controlKeyUp = upKey;
+        this.controlKeyRight = rightKey;
+        this.controlKeyDown = downKey;
+        this.controlKeyLeft = leftKey; 
+    }
+
+    this.reset = function(whichImage, carName){
+        this.name = carName;
         this.myCarPic = whichImage;
 
         for(var eachRow=0;eachRow<trackRow;eachRow++){    
@@ -35,17 +55,19 @@ function carClass() {
      }
 
     this.move = function(){
+      //  console.log(this.keyHeld_Gas);
         this.speed *= GROUNDSPEED_DECAY_MULT;
-        if(keyHeld_Gas){
+        if(this.keyHeld_Gas){
             this.speed += DRIVE_POWER;
+        //    console.log("GAS!!!!")
         }
-        if(keyHeld_Reverse){
+        if(this.keyHeld_Reverse){
             this.speed -= REVERSE_POWER;
         }
-        if(keyHeld_TurnRight && this.speed != 0){
+        if(this.keyHeld_TurnRight && this.speed != 0){
             this.ang += TURN_RATE;
         }
-        if(keyHeld_TurnLeft && this.speed != 0){
+        if(this.keyHeld_TurnLeft && this.speed != 0){
             this.ang -= TURN_RATE;
         }
         // move the car
@@ -53,9 +75,9 @@ function carClass() {
         this.y += Math.sin(this.ang) * this.speed;
     
     // stop the car make sure speed is 0
-        if(this.speed < carDeadStop && !keyHeld_Gas && !keyHeld_Reverse){
-            this.speed = 0;
-        }
+       // if(this.speed < carDeadStop && !this.keyHeld_Gas && !this.keyHeld_Reverse){
+       //     this.speed = 0;
+       // }
         carTrackHandling(this);
     }
 

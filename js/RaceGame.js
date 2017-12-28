@@ -31,8 +31,8 @@ function imageLoadingDoneSoStartGame(){
     setInterval(updateAll, 1000/framesPerSecond);// this repeatedly calls updateAll function for our game loop (30 fps)
 
     setupInput();
-    blueCar.reset(carPic);
-    greenCar.reset(otherCarPic);
+    blueCar.reset(carPic, "Blue wind");
+    greenCar.reset(otherCarPic, "Green Turd");
 }
 // the game loop
 function updateAll(){
